@@ -16,25 +16,26 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        todoAdapter = TodoAdapter(mutableListOf())
+        todoAdapter = TodoAdapter(mutableListOf(), this)
 
         rvTodoItems.adapter = todoAdapter
         rvTodoItems.layoutManager = LinearLayoutManager(this)
 
-        priorityBar.numStars = 5
+        priorityBar.rating = 2.5F
 
         dateSelector.setOnClickListener {
+            val curDate = LocalDate.now()
 
             val datePickerDialog = DatePickerDialog(this,
                 { _, year, monthOfYear, dayOfMonth ->
                     dueDateSelected = LocalDate.of(year, monthOfYear, dayOfMonth)
-                }, LocalDate.now().year, LocalDate.now().monthValue, LocalDate.now().dayOfMonth);
-            datePickerDialog.show();
+                }, curDate.year, curDate.monthValue, curDate.dayOfMonth)
+            datePickerDialog.show()
         }
 
         btnAddTodo.setOnClickListener {
             val todoTitle = todoTitleText.text.toString()
-            val priority: Int = priorityBar.numStars
+            val priority: Float = priorityBar.rating
 
             if(todoTitle.isNotEmpty()) {
                 val todo = Todo(todoTitle, priority, dueDateSelected)
