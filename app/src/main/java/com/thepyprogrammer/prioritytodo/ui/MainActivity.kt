@@ -3,8 +3,6 @@ package com.thepyprogrammer.prioritytodo.ui
 import android.app.DatePickerDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.widget.Button
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.thepyprogrammer.prioritytodo.R
 import com.thepyprogrammer.prioritytodo.model.Todo
@@ -15,6 +13,7 @@ import java.io.PrintWriter
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -28,7 +27,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        todoAdapter = TodoAdapter()
+        todoAdapter = TodoAdapter(this, readFile())
 
         rvTodoItems.adapter = todoAdapter
         rvTodoItems.layoutManager = LinearLayoutManager(this)
@@ -57,13 +56,31 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onDestroy() {
-        val dbFile = File(filesDir.path.toString() + "/raw/todo.txt")
+    fun readFile(): MutableList<Todo> {
+        val dbFile = File(filesDir.path.toString() + "/todos.txt")
+        if(!dbFile.exists()) dbFile.createNewFile()
+        val sc = Scanner(dbFile)
+        val list = mutableListOf<Todo>()
+        while(sc.hasNext()) {
+            val s = sc.nextLine().split(" ")
+            list.add(Todo(s[0], s[1].toFloat(), dTF.parse(s[2]) as LocalDate, s[3].toBoolean()))
+        }
+        sc.close()
+        return list
+    }
+
+    fun updateFile() {
+        val dbFile = File(filesDir.path.toString() + "/todos.txt")
+        if(!dbFile.exists()) dbFile.createNewFile()
         val pw = PrintWriter(dbFile)
         todoAdapter.todos.forEach {
             pw.println(it)
         }
         pw.close()
+    }
+
+    override fun onDestroy() {
+        updateFile()
         super.onDestroy()
     }
 }
