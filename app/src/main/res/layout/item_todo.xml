@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="70dp"
+    android:layout_height="100dp"
     android:paddingStart="8dp"
     android:paddingEnd="8dp">
 
@@ -17,33 +17,40 @@
 
     <EditText
         android:id="@+id/todoTitleView"
-        android:layout_width="0dp"
+        android:layout_width="220dp"
         android:layout_height="wrap_content"
         android:text="Example"
-        android:textSize="20sp"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/dateView"
+        app:layout_constraintEnd_toStartOf="@+id/sidebar"
         app:layout_constraintStart_toEndOf="@id/cbDone"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/dateView"
+    <LinearLayout
+        android:id="@+id/sidebar"
         android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:text="2/2/21"
-        android:textSize="16sp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
         app:layout_constraintStart_toEndOf="@id/todoTitleView"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/priorityBar"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <RatingBar
-        android:id="@+id/priorityBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/Widget.AppCompat.RatingBar.Small"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/dateView"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="2/2/2021"
+            android:textSize="12sp" />
+
+        <RatingBar
+            android:id="@+id/priorityBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Widget.AppCompat.RatingBar.Small" />
+
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
