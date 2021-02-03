@@ -1,8 +1,8 @@
 package com.thepyprogrammer.prioritytodo.ui
 
 import android.app.DatePickerDialog
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.thepyprogrammer.prioritytodo.R
 import com.thepyprogrammer.prioritytodo.model.Todo
@@ -36,11 +36,11 @@ class MainActivity : AppCompatActivity() {
 
         dateSelector.setOnClickListener {
             val datePickerDialog = DatePickerDialog(this,
-                { _, year, monthOfYear, dayOfMonth ->
-                    dueDateSelected = LocalDate.of(year, monthOfYear+1, dayOfMonth)
-                    dateSelector.text = dTF.format(dueDateSelected)
-                }, dueDateSelected.year, dueDateSelected.monthValue - 1, dueDateSelected.dayOfMonth)
-            datePickerDialog.datePicker.minDate = System.currentTimeMillis() - 1000;
+                    { _, year, monthOfYear, dayOfMonth ->
+                        dueDateSelected = LocalDate.of(year, monthOfYear + 1, dayOfMonth)
+                        dateSelector.text = dTF.format(dueDateSelected)
+                    }, dueDateSelected.year, dueDateSelected.monthValue - 1, dueDateSelected.dayOfMonth)
+            datePickerDialog.datePicker.minDate = System.currentTimeMillis() - 1000
             datePickerDialog.show()
         }
 
@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
             val todoTitle = todoTitleText.text.toString()
             val priority: Float = priorityBar.rating
 
-            if(todoTitle.isNotEmpty()) {
+            if (todoTitle.isNotEmpty()) {
                 val todo = Todo(todoTitle, priority, dueDateSelected)
                 todoAdapter.addTodo(todo)
                 todoTitleText.text.clear()
@@ -58,10 +58,10 @@ class MainActivity : AppCompatActivity() {
 
     fun readFile(): MutableList<Todo> {
         val dbFile = File(filesDir.path.toString() + "/todos.txt")
-        if(!dbFile.exists()) dbFile.createNewFile()
+        if (!dbFile.exists()) dbFile.createNewFile()
         val sc = Scanner(dbFile)
         val list = mutableListOf<Todo>()
-        while(sc.hasNext()) {
+        while (sc.hasNext()) {
             val s = sc.nextLine().split(" ")
             list.add(Todo(s[0], s[1].toFloat(), dTF.parse(s[2]) as LocalDate, s[3].toBoolean()))
         }
@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity() {
 
     fun updateFile() {
         val dbFile = File(filesDir.path.toString() + "/todos.txt")
-        if(!dbFile.exists()) dbFile.createNewFile()
+        if (!dbFile.exists()) dbFile.createNewFile()
         val pw = PrintWriter(dbFile)
         todoAdapter.todos.forEach {
             pw.println(it)
