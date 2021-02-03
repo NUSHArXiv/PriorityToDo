@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".ui.MainActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvTodoItems"
@@ -19,6 +19,7 @@
         android:id="@+id/modal"
         android:layout_width="match_parent"
         android:layout_height="200dp"
+        android:background="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -27,12 +28,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-
             android:orientation="vertical">
             <EditText
                 android:id="@+id/todoTitleText"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:hint="Enter Todo Title" />
@@ -40,14 +40,6 @@
                 android:id="@+id/priorityBar"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp" />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <EditText
-                    android:id="@+id/dueDatePicker"
-                    android:layout_width="250dp"
-                    android:layout_height="40dp"
-                    android:hint="Enter Due Date" />
 
                 <Button
                     android:id="@+id/dateSelector"
@@ -55,7 +47,6 @@
                     android:layout_height="match_parent"
                     android:layout_marginStart="20dp"
                     android:text="Select Date" />
-            </LinearLayout>
 
         </LinearLayout>
 
