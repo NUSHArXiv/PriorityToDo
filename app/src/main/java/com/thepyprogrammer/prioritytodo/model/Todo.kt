@@ -4,7 +4,7 @@ import com.thepyprogrammer.prioritytodo.ui.MainActivity
 import java.time.LocalDate
 
 data class Todo(
-    val title: String,
+    var title: String,
     var priority: Float,
     var dueDate: LocalDate,
     var isChecked: Boolean = false
