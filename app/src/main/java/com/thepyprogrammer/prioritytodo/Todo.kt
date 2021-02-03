@@ -4,7 +4,7 @@ import java.time.LocalDate
 
 data class Todo(
     val title: String,
-    val priority: Int,
-    val dueDate: LocalDate,
+    var priority: Float,
+    var dueDate: LocalDate,
     var isChecked: Boolean = false
 )
