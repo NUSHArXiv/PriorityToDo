@@ -18,22 +18,22 @@ import java.time.format.DateTimeFormatterBuilder
 
 
 class TodoAdapter(
-    private val activity: MainActivity,
-    val todos: MutableList<Todo> = mutableListOf()
+        private val activity: MainActivity,
+        val todos: MutableList<Todo> = mutableListOf()
 ) : RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
     private val dTF: DateTimeFormatter = DateTimeFormatterBuilder().parseCaseInsensitive().appendPattern(
-        "dd/MM/yyyy"
+            "dd/MM/yyyy"
     ).toFormatter()
 
     class TodoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoViewHolder {
         return TodoViewHolder(
-            LayoutInflater.from(parent.context).inflate(
-                R.layout.item_todo,
-                parent,
-                false
-            )
+                LayoutInflater.from(parent.context).inflate(
+                        R.layout.item_todo,
+                        parent,
+                        false
+                )
         )
     }
 
@@ -43,8 +43,8 @@ class TodoAdapter(
         todos.sortWith { p1, p2 ->
             when {
                 p1.dueDate > p2.dueDate -> 1
-                p1.dueDate == p2.dueDate -> if(p1.priority > p2.priority) 1 else if(p1.priority < p2.priority) -1 else p1.title.compareTo(
-                    p2.title
+                p1.dueDate == p2.dueDate -> if (p1.priority > p2.priority) 1 else if (p1.priority < p2.priority) -1 else p1.title.compareTo(
+                        p2.title
                 )
                 else -> -1
             }
@@ -55,7 +55,7 @@ class TodoAdapter(
     }
 
     private fun toggleStrikeThrough(tvTodoTitle: TextView, isChecked: Boolean, dateView: Button) {
-        if(isChecked) {
+        if (isChecked) {
             tvTodoTitle.paintFlags = tvTodoTitle.paintFlags or STRIKE_THRU_TEXT_FLAG
 
         } else {
@@ -79,15 +79,15 @@ class TodoAdapter(
 
             dateView.setOnClickListener {
                 val datePickerDialog = DatePickerDialog(context,
-                    { _, year, monthOfYear, dayOfMonth ->
-                        curTodo.dueDate = LocalDate.of(year, monthOfYear + 1, dayOfMonth)
-                        notifyItemChanged(position)
-                    },
-                    curTodo.dueDate.year,
-                    curTodo.dueDate.monthValue - 1,
-                    curTodo.dueDate.dayOfMonth
+                        { _, year, monthOfYear, dayOfMonth ->
+                            curTodo.dueDate = LocalDate.of(year, monthOfYear + 1, dayOfMonth)
+                            notifyItemChanged(position)
+                        },
+                        curTodo.dueDate.year,
+                        curTodo.dueDate.monthValue - 1,
+                        curTodo.dueDate.dayOfMonth
                 )
-                datePickerDialog.datePicker.minDate = System.currentTimeMillis() - 1000;
+                datePickerDialog.datePicker.minDate = System.currentTimeMillis() - 1000
                 datePickerDialog.show()
             }
 
