@@ -9,18 +9,20 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.thepyprogrammer.prioritytodo.R
 import com.thepyprogrammer.prioritytodo.ui.MainActivity
 import kotlinx.android.synthetic.main.item_todo.view.*
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeFormatterBuilder
 
 
 class TodoAdapter(
         private val activity: MainActivity,
         val todos: MutableList<Todo> = mutableListOf()
 ) : RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
+
+    var recentlyDeleted: Todo? = null;
+    var recentlyDeletedPosition: Int = -1;
 
     class TodoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
@@ -117,7 +119,20 @@ class TodoAdapter(
     fun deleteItem(position: Int) {
         todos.removeAt(position)
         notifyDataSetChanged()
+        val view: View = activity.findViewById(R.id.home)
+        val snackbar: Snackbar = Snackbar.make(view, "Message Has Been Deleted",
+                Snackbar.LENGTH_LONG)
+        snackbar.setAction("UNDO") { undoDelete() }
+        snackbar.show()
         activity.updateFile()
+    }
+
+    private fun undoDelete() {
+        recentlyDeleted?.let {
+            todos.add(recentlyDeletedPosition,
+                    it)
+        }
+        notifyItemInserted(recentlyDeletedPosition)
     }
 
     override fun getItemCount(): Int {
