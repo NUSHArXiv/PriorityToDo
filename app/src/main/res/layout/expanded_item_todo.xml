@@ -29,6 +29,7 @@
                 android:id="@+id/cbDone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="100dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/todoTitleView"
                 app:layout_constraintStart_toStartOf="parent"
@@ -36,9 +37,10 @@
 
             <EditText
                 android:id="@+id/todoTitleView"
-                android:layout_width="350dp"
+                android:layout_width="160dp"
                 android:layout_height="wrap_content"
                 android:hint="Enter Todo Title"
+                android:layout_marginEnd="100dp"
                 android:textSize="22sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -67,12 +69,11 @@
 
         <EditText
             android:id="@+id/detailsText"
-            android:layout_width="360dp"
+            android:layout_width="220dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="50dp"
+            android:layout_margin="50dp"
             android:inputType="textMultiLine"
-            android:lines="15"
+            android:lines="12"
             android:scrollbars="vertical" />
 
         <View
