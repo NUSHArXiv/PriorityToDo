@@ -66,6 +66,7 @@
 
 
         <EditText
+            android:id="@+id/detailsText"
             android:layout_width="360dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
