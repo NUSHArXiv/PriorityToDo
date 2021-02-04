@@ -21,9 +21,6 @@ class TodoAdapter(
         private val activity: MainActivity,
         val todos: MutableList<Todo> = mutableListOf()
 ) : RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
-    private val dTF: DateTimeFormatter = DateTimeFormatterBuilder().parseCaseInsensitive().appendPattern(
-            "dd/MM/yyyy"
-    ).toFormatter()
 
     class TodoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
@@ -40,18 +37,22 @@ class TodoAdapter(
     fun addTodo(todo: Todo) {
         todos.add(todo)
         notifyItemInserted(todos.size - 1)
+        sort()
+        notifyDataSetChanged()
+        activity.updateFile()
+
+    }
+
+    fun sort() {
         todos.sortWith { p1, p2 ->
             when {
                 p1.dueDate > p2.dueDate -> 1
-                p1.dueDate == p2.dueDate -> if (p1.priority > p2.priority) 1 else if (p1.priority < p2.priority) -1 else p1.title.compareTo(
+                p1.dueDate == p2.dueDate -> if (p1.priority > p2.priority) -1 else if (p1.priority < p2.priority) 1 else p1.title.compareTo(
                         p2.title
                 )
                 else -> -1
             }
         }
-        notifyDataSetChanged()
-        activity.updateFile()
-
     }
 
     private fun toggleStrikeThrough(tvTodoTitle: TextView, isChecked: Boolean, dateView: Button) {
@@ -62,6 +63,7 @@ class TodoAdapter(
             tvTodoTitle.paintFlags = tvTodoTitle.paintFlags and STRIKE_THRU_TEXT_FLAG.inv()
         }
         dateView.isEnabled = !isChecked
+        tvTodoTitle.isEnabled = !isChecked
     }
 
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
@@ -69,19 +71,24 @@ class TodoAdapter(
         holder.itemView.apply {
             todoTitleView.setText(curTodo.title)
             cbDone.isChecked = curTodo.isChecked
-            dateView.text = dTF.format(curTodo.dueDate)
+            dateView.text = MainActivity.dTF.format(curTodo.dueDate)
             priorityBar.rating = curTodo.priority
             toggleStrikeThrough(todoTitleView, curTodo.isChecked, dateView)
             cbDone.setOnCheckedChangeListener { _, isChecked ->
                 toggleStrikeThrough(todoTitleView, isChecked, dateView)
                 curTodo.isChecked = !curTodo.isChecked
+                sort()
+                activity.updateFile()
             }
 
             dateView.setOnClickListener {
                 val datePickerDialog = DatePickerDialog(context,
                         { _, year, monthOfYear, dayOfMonth ->
                             curTodo.dueDate = LocalDate.of(year, monthOfYear + 1, dayOfMonth)
-                            notifyItemChanged(position)
+                            sort()
+                            // notifyItemChanged(position)
+                            notifyDataSetChanged()
+                            activity.updateFile()
                         },
                         curTodo.dueDate.year,
                         curTodo.dueDate.monthValue - 1,
@@ -95,12 +102,22 @@ class TodoAdapter(
                 override fun onKey(v: View?, keyCode: Int, event: KeyEvent): Boolean {
                     if (keyCode == KeyEvent.KEYCODE_ENTER && todoTitleView.text.toString().isNotEmpty()) {
                         curTodo.title = todoTitleView.text.toString()
+                        sort()
+                        // notifyItemChanged(position)
+                        notifyDataSetChanged()
+                        activity.updateFile()
                         return true
                     }
                     return false
                 }
             })
         }
+    }
+
+    fun deleteItem(position: Int) {
+        todos.removeAt(position)
+        notifyDataSetChanged()
+        activity.updateFile()
     }
 
     override fun getItemCount(): Int {
