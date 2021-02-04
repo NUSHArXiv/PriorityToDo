@@ -6,10 +6,10 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.thepyprogrammer.prioritytodo.R
-import com.thepyprogrammer.prioritytodo.model.SwipeToDeleteCallback
-import com.thepyprogrammer.prioritytodo.model.Todo
-import com.thepyprogrammer.prioritytodo.model.TodoAdapter
+import com.thepyprogrammer.prioritytodo.model.*
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import java.io.IOException
@@ -65,15 +65,23 @@ class MainActivity : AppCompatActivity() {
 
     fun readFile(): MutableList<Todo> {
         try {
-        val dbFile = File(filesDir.path.toString() + "/todos.txt")
+        val dbFile = File(filesDir.path.toString() + "/todos.json")
         if (!dbFile.exists()) dbFile.createNewFile()
         val sc = Scanner(dbFile)
-        val list = mutableListOf<Todo>()
+        var s = ""
+            val gson = Gson()
         while (sc.hasNext()) {
-            val s = sc.nextLine().split("\t")
-            list.add(Todo(s[0], s[1].toFloat(), LocalDate.parse(s[2], dTF) as LocalDate, s[3].toBoolean()))
+            s += sc.nextLine()
         }
         sc.close()
+        val sType = object : TypeToken<List<GsonTodo>>() { }.type
+        val gList = gson.fromJson<List<GsonTodo>>(s, sType)
+        val list = mutableListOf<Todo>()
+            if(gList != null) {
+                gList.forEach {
+                    list.add(it.toTodo())
+                }
+            }
         return list
         } catch (ex: IOException) {
             Log.i("ERR", ex.stackTrace.toString())
@@ -83,12 +91,13 @@ class MainActivity : AppCompatActivity() {
 
     fun updateFile() {
         try {
-            val dbFile = File(filesDir.path.toString() + "/todos.txt")
+            val gTodos = GsonTodos(todoAdapter.todos)
+            val gson = Gson()
+            val jsonString = gson.toJson(gTodos)
+            val dbFile = File(filesDir.path.toString() + "/todos.json")
             if (!dbFile.exists()) dbFile.createNewFile()
             val pw = PrintWriter(dbFile)
-            todoAdapter.todos.forEach {
-                pw.println(it)
-            }
+            pw.println(jsonString)
             pw.close()
         } catch (ex: IOException) {
             Log.i("ERR", ex.stackTrace.toString())
