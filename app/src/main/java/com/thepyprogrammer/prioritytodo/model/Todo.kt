@@ -7,7 +7,8 @@ data class Todo(
         var title: String,
         var priority: Float,
         var dueDate: LocalDate,
-        var isChecked: Boolean = false
+        var isChecked: Boolean = false,
+        var description: String = ""
 ) {
     override fun toString(): String {
         val dueDateString = MainActivity.dTF.format(dueDate);
