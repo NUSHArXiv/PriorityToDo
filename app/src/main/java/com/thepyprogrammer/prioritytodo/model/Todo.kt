@@ -10,6 +10,7 @@ data class Todo(
         var isChecked: Boolean = false
 ) {
     override fun toString(): String {
-        return "$title $priority " + MainActivity.dTF.format(dueDate) + " $isChecked"
+        val dueDateString = MainActivity.dTF.format(dueDate);
+        return "$title\t$priority\t$dueDateString\t$isChecked"
     }
 }
