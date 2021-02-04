@@ -2,6 +2,7 @@ package com.thepyprogrammer.prioritytodo.model
 
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.content.Context
 import android.graphics.Paint.STRIKE_THRU_TEXT_FLAG
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -23,8 +24,8 @@ class TodoAdapter(
     val todos: MutableList<Todo> = mutableListOf()
 ) : RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
 
-    var recentlyDeleted: Todo? = null;
-    var recentlyDeletedPosition: Int = -1;
+    var recentlyDeleted: Todo? = null
+    var recentlyDeletedPosition: Int = -1
 
     class TodoViewHolder(itemView: CardView) : RecyclerView.ViewHolder(itemView)
 
@@ -88,13 +89,13 @@ class TodoAdapter(
             }
 
             holder.itemView.setOnClickListener {
-                showExpandedTodoDialog(curTodo)
+                showExpandedTodoDialog(curTodo, context)
 
             }
 
             dateView.setOnClickListener {
                 val datePickerDialog = DatePickerDialog(
-                    this.context,
+                    context,
                     { _, year, monthOfYear, dayOfMonth ->
                         curTodo.dueDate = LocalDate.of(year, monthOfYear + 1, dayOfMonth)
                         sort()
@@ -128,7 +129,10 @@ class TodoAdapter(
         }
     }
 
-    fun showExpandedTodoDialog(todo: Todo) {
+
+
+
+    fun showExpandedTodoDialog(todo: Todo, context: Context) {
         val builder = AlertDialog.Builder(activity)
         builder.setTitle("Edit Todo")
         // set the custom layout
@@ -143,8 +147,14 @@ class TodoAdapter(
         val todoTitleView = customLayout.findViewById<EditText>(R.id.todoTitleView)
         val dateView = customLayout.findViewById<Button>(R.id.dateView)
         val cbDone = customLayout.findViewById<CheckBox>(R.id.cbDone)
+        val description = customLayout.findViewById<EditText>(R.id.detailsText)
 
+        todoTitleView.setText(todo.title)
+        cbDone.isChecked = todo.isChecked
+        dateView.text = MainActivity.dTF.format(todo.dueDate)
         customPriorityBar.rating = todo.priority
+        description.setText(todo.description)
+        toggleStrikeThrough(todoTitleView, todo.isChecked, dateView)
 
         cbDone.setOnCheckedChangeListener { _, isChecked ->
             toggleStrikeThrough(todoTitleView, isChecked, dateView)
@@ -153,7 +163,7 @@ class TodoAdapter(
 
         dateView.setOnClickListener {
             val datePickerDialog = DatePickerDialog(
-                activity.applicationContext,
+                context,
                 { _, year, monthOfYear, dayOfMonth ->
                     todo.dueDate = LocalDate.of(year, monthOfYear + 1, dayOfMonth)
                 },
@@ -180,9 +190,8 @@ class TodoAdapter(
         builder.setPositiveButton(
             "OK"
         ) { _, _ ->
-            val description = customLayout.findViewById<EditText>(R.id.detailsText).text.toString();
             val priority: Float = customPriorityBar.rating
-            todo.description = description
+            todo.description = description.text.toString()
             todo.priority = priority
             sort()
             notifyDataSetChanged()
