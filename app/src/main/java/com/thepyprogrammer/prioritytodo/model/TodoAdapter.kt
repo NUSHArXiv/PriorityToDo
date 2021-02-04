@@ -1,25 +1,26 @@
 package com.thepyprogrammer.prioritytodo.model
 
+import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.graphics.Paint.STRIKE_THRU_TEXT_FLAG
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.TextView
+import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.thepyprogrammer.prioritytodo.R
 import com.thepyprogrammer.prioritytodo.ui.MainActivity
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.item_todo.view.*
 import java.time.LocalDate
 
 
 class TodoAdapter(
-        private val activity: MainActivity,
-        val todos: MutableList<Todo> = mutableListOf()
+    private val activity: MainActivity,
+    val todos: MutableList<Todo> = mutableListOf()
 ) : RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
 
     var recentlyDeleted: Todo? = null;
@@ -29,11 +30,11 @@ class TodoAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoViewHolder {
         return TodoViewHolder(
-                LayoutInflater.from(parent.context).inflate(
-                        R.layout.item_todo,
-                        parent,
-                        false
-                ) as CardView
+            LayoutInflater.from(parent.context).inflate(
+                R.layout.item_todo,
+                parent,
+                false
+            ) as CardView
         )
     }
 
@@ -51,7 +52,7 @@ class TodoAdapter(
             when {
                 p1.dueDate > p2.dueDate -> 1
                 p1.dueDate == p2.dueDate -> if (p1.priority > p2.priority) -1 else if (p1.priority < p2.priority) 1 else p1.title.compareTo(
-                        p2.title
+                    p2.title
                 )
                 else -> -1
             }
@@ -77,6 +78,8 @@ class TodoAdapter(
             dateView.text = MainActivity.dTF.format(curTodo.dueDate)
             priorityBar.rating = curTodo.priority
             toggleStrikeThrough(todoTitleView, curTodo.isChecked, dateView)
+
+
             cbDone.setOnCheckedChangeListener { _, isChecked ->
                 toggleStrikeThrough(todoTitleView, isChecked, dateView)
                 curTodo.isChecked = !curTodo.isChecked
@@ -85,21 +88,23 @@ class TodoAdapter(
             }
 
             holder.itemView.setOnClickListener {
+                showExpandedTodoDialog(curTodo)
 
             }
 
             dateView.setOnClickListener {
-                val datePickerDialog = DatePickerDialog(context,
-                        { _, year, monthOfYear, dayOfMonth ->
-                            curTodo.dueDate = LocalDate.of(year, monthOfYear + 1, dayOfMonth)
-                            sort()
-                            // notifyItemChanged(position)
-                            notifyDataSetChanged()
-                            activity.updateFile()
-                        },
-                        curTodo.dueDate.year,
-                        curTodo.dueDate.monthValue - 1,
-                        curTodo.dueDate.dayOfMonth
+                val datePickerDialog = DatePickerDialog(
+                    this.context,
+                    { _, year, monthOfYear, dayOfMonth ->
+                        curTodo.dueDate = LocalDate.of(year, monthOfYear + 1, dayOfMonth)
+                        sort()
+                        // notifyItemChanged(position)
+                        notifyDataSetChanged()
+                        activity.updateFile()
+                    },
+                    curTodo.dueDate.year,
+                    curTodo.dueDate.monthValue - 1,
+                    curTodo.dueDate.dayOfMonth
                 )
                 datePickerDialog.datePicker.minDate = System.currentTimeMillis() - 1000
                 datePickerDialog.show()
@@ -107,7 +112,9 @@ class TodoAdapter(
 
             todoTitleView.setOnKeyListener(object : View.OnKeyListener {
                 override fun onKey(v: View?, keyCode: Int, event: KeyEvent): Boolean {
-                    if (keyCode == KeyEvent.KEYCODE_ENTER && todoTitleView.text.toString().isNotEmpty()) {
+                    if (keyCode == KeyEvent.KEYCODE_ENTER && todoTitleView.text.toString()
+                            .isNotEmpty()
+                    ) {
                         curTodo.title = todoTitleView.text.toString()
                         sort()
                         // notifyItemChanged(position)
@@ -121,12 +128,79 @@ class TodoAdapter(
         }
     }
 
+    fun showExpandedTodoDialog(todo: Todo) {
+        val builder = AlertDialog.Builder(activity)
+        builder.setTitle("Edit Todo")
+        // set the custom layout
+        val customLayout: View = LayoutInflater.from(activity.applicationContext).inflate(
+            R.layout.expanded_item_todo,
+            null
+        )
+        builder.setView(customLayout)
+        // create and show the alert dialog
+
+        val customPriorityBar = customLayout.findViewById<RatingBar>(R.id.priorityBar)
+        val todoTitleView = customLayout.findViewById<EditText>(R.id.todoTitleView)
+        val dateView = customLayout.findViewById<Button>(R.id.dateView)
+        val cbDone = customLayout.findViewById<CheckBox>(R.id.cbDone)
+
+        customPriorityBar.rating = todo.priority
+
+        cbDone.setOnCheckedChangeListener { _, isChecked ->
+            toggleStrikeThrough(todoTitleView, isChecked, dateView)
+            todo.isChecked = !todo.isChecked
+        }
+
+        dateView.setOnClickListener {
+            val datePickerDialog = DatePickerDialog(
+                activity.applicationContext,
+                { _, year, monthOfYear, dayOfMonth ->
+                    todo.dueDate = LocalDate.of(year, monthOfYear + 1, dayOfMonth)
+                },
+                todo.dueDate.year,
+                todo.dueDate.monthValue - 1,
+                todo.dueDate.dayOfMonth
+            )
+            datePickerDialog.datePicker.minDate = System.currentTimeMillis() - 1000
+            datePickerDialog.show()
+        }
+
+        todoTitleView.setOnKeyListener(object : View.OnKeyListener {
+            override fun onKey(v: View?, keyCode: Int, event: KeyEvent): Boolean {
+                if (keyCode == KeyEvent.KEYCODE_ENTER && todoTitleView.text.toString()
+                        .isNotEmpty()
+                ) {
+                    todo.title = todoTitleView.text.toString()
+                    return true
+                }
+                return false
+            }
+        })
+
+        builder.setPositiveButton(
+            "OK"
+        ) { _, _ ->
+            val description = customLayout.findViewById<EditText>(R.id.detailsText).text.toString();
+            val priority: Float = customPriorityBar.rating
+            todo.description = description
+            todo.priority = priority
+            sort()
+            notifyDataSetChanged()
+            activity.updateFile()
+        }
+
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+    }
+
     fun deleteItem(position: Int) {
         todos.removeAt(position)
         notifyDataSetChanged()
         val view: View = activity.findViewById(R.id.home)
-        val snackbar: Snackbar = Snackbar.make(view, "Task Has Been Deleted",
-                Snackbar.LENGTH_LONG)
+        val snackbar: Snackbar = Snackbar.make(
+            view, "Task Has Been Deleted",
+            Snackbar.LENGTH_LONG
+        )
         snackbar.setAction("UNDO") { undoDelete() }
         snackbar.show()
         activity.updateFile()
@@ -134,12 +208,16 @@ class TodoAdapter(
 
     private fun undoDelete() {
         recentlyDeleted?.let {
-            todos.add(recentlyDeletedPosition,
-                    it)
+            todos.add(
+                recentlyDeletedPosition,
+                it
+            )
             notifyItemInserted(recentlyDeletedPosition)
             val view: View = activity.findViewById(R.id.home)
-            val snackbar: Snackbar = Snackbar.make(view, "Task Has Been Restored",
-                    Snackbar.LENGTH_SHORT)
+            val snackbar: Snackbar = Snackbar.make(
+                view, "Task Has Been Restored",
+                Snackbar.LENGTH_SHORT
+            )
             snackbar.show()
         }
     }
