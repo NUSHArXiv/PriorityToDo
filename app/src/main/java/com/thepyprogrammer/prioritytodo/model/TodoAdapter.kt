@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.thepyprogrammer.prioritytodo.R
@@ -24,7 +25,7 @@ class TodoAdapter(
     var recentlyDeleted: Todo? = null;
     var recentlyDeletedPosition: Int = -1;
 
-    class TodoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    class TodoViewHolder(itemView: CardView) : RecyclerView.ViewHolder(itemView)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoViewHolder {
         return TodoViewHolder(
@@ -32,7 +33,7 @@ class TodoAdapter(
                         R.layout.item_todo,
                         parent,
                         false
-                )
+                ) as CardView
         )
     }
 
@@ -83,6 +84,10 @@ class TodoAdapter(
                 activity.updateFile()
             }
 
+            holder.itemView.setOnClickListener {
+
+            }
+
             dateView.setOnClickListener {
                 val datePickerDialog = DatePickerDialog(context,
                         { _, year, monthOfYear, dayOfMonth ->
@@ -120,7 +125,7 @@ class TodoAdapter(
         todos.removeAt(position)
         notifyDataSetChanged()
         val view: View = activity.findViewById(R.id.home)
-        val snackbar: Snackbar = Snackbar.make(view, "Message Has Been Deleted",
+        val snackbar: Snackbar = Snackbar.make(view, "Task Has Been Deleted",
                 Snackbar.LENGTH_LONG)
         snackbar.setAction("UNDO") { undoDelete() }
         snackbar.show()
@@ -131,8 +136,12 @@ class TodoAdapter(
         recentlyDeleted?.let {
             todos.add(recentlyDeletedPosition,
                     it)
+            notifyItemInserted(recentlyDeletedPosition)
+            val view: View = activity.findViewById(R.id.home)
+            val snackbar: Snackbar = Snackbar.make(view, "Task Has Been Restored",
+                    Snackbar.LENGTH_SHORT)
+            snackbar.show()
         }
-        notifyItemInserted(recentlyDeletedPosition)
     }
 
     override fun getItemCount(): Int {
