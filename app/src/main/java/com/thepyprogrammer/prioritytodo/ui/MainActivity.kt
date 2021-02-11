@@ -65,24 +65,21 @@ class MainActivity : AppCompatActivity() {
 
     fun readFile(): MutableList<Todo> {
         try {
-        val dbFile = File(filesDir.path.toString() + "/todos.json")
-        if (!dbFile.exists()) dbFile.createNewFile()
-        val sc = Scanner(dbFile)
-        var s = ""
+            val dbFile = File(filesDir.path.toString() + "/todos.json")
+            if (!dbFile.exists()) dbFile.createNewFile()
+            val sc = Scanner(dbFile)
+            var s = ""
             val gson = Gson()
-        while (sc.hasNext()) {
-            s += sc.nextLine()
-        }
-        sc.close()
-        val sType = object : TypeToken<List<GsonTodo>>() { }.type
-        val gList = gson.fromJson<List<GsonTodo>>(s, sType)
-        val list = mutableListOf<Todo>()
-            if(gList != null) {
-                gList.forEach {
-                    list.add(it.toTodo())
-                }
+            while (sc.hasNext()) {
+                s += sc.nextLine()
             }
-        return list
+            sc.close()
+            val sType = object : TypeToken<List<GsonTodo>>() { }.type
+            val list = mutableListOf<Todo>()
+            gson.fromJson<List<GsonTodo>>(s, sType)?.forEach {
+                list.add(it.toTodo())
+            }
+            return list
         } catch (ex: IOException) {
             Log.i("ERR", ex.stackTrace.toString())
             return mutableListOf()
