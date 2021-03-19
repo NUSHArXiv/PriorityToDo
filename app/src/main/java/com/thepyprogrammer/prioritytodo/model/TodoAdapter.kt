@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.thepyprogrammer.prioritytodo.R
 import com.thepyprogrammer.prioritytodo.ui.MainActivity
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.item_todo.view.*
 import java.time.LocalDate
 
@@ -128,8 +127,6 @@ class TodoAdapter(
             })
         }
     }
-
-
 
 
     fun showExpandedTodoDialog(todo: Todo, context: Context) {
