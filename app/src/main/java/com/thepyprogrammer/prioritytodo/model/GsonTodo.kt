@@ -11,9 +11,21 @@ data class GsonTodo(
     @SerializedName("isChecked") var isChecked: String,
     @SerializedName("description") var description: String = ""
 ) {
-    constructor(todo: Todo): this(todo.title, "${todo.priority}", MainActivity.dTF.format(todo.dueDate), "${todo.isChecked}", todo.description)
+    constructor(todo: Todo) : this(
+        todo.title,
+        "${todo.priority}",
+        MainActivity.dTF.format(todo.dueDate),
+        "${todo.isChecked}",
+        todo.description
+    )
 
     fun toTodo(): Todo {
-        return Todo(title, priority.toFloat(), LocalDate.parse(dueDate, MainActivity.dTF), isChecked.toBoolean(), description)
+        return Todo(
+            title,
+            priority.toFloat(),
+            LocalDate.parse(dueDate, MainActivity.dTF),
+            isChecked.toBoolean(),
+            description
+        )
     }
 }
