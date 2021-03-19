@@ -26,7 +26,9 @@ class MainActivity : AppCompatActivity() {
     private var dueDateSelected: LocalDate = LocalDate.now()
 
     companion object {
-        val dTF: DateTimeFormatter = DateTimeFormatterBuilder().parseCaseInsensitive().appendPattern("dd/MM/yyyy").toFormatter()
+        val dTF: DateTimeFormatter =
+            DateTimeFormatterBuilder().parseCaseInsensitive().appendPattern("dd/MM/yyyy")
+                .toFormatter()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,11 +44,13 @@ class MainActivity : AppCompatActivity() {
         priorityBar.rating = 2.5F
 
         dateSelector.setOnClickListener {
-            val datePickerDialog = DatePickerDialog(this,
-                    { _, year, monthOfYear, dayOfMonth ->
-                        dueDateSelected = LocalDate.of(year, monthOfYear + 1, dayOfMonth)
-                        dateSelector.text = dTF.format(dueDateSelected)
-                    }, dueDateSelected.year, dueDateSelected.monthValue - 1, dueDateSelected.dayOfMonth)
+            val datePickerDialog = DatePickerDialog(
+                this,
+                { _, year, monthOfYear, dayOfMonth ->
+                    dueDateSelected = LocalDate.of(year, monthOfYear + 1, dayOfMonth)
+                    dateSelector.text = dTF.format(dueDateSelected)
+                }, dueDateSelected.year, dueDateSelected.monthValue - 1, dueDateSelected.dayOfMonth
+            )
             datePickerDialog.datePicker.minDate = System.currentTimeMillis() - 1000
             datePickerDialog.show()
         }
@@ -74,7 +78,7 @@ class MainActivity : AppCompatActivity() {
                 s += sc.nextLine()
             }
             sc.close()
-            val sType = object : TypeToken<List<GsonTodo>>() { }.type
+            val sType = object : TypeToken<List<GsonTodo>>() {}.type
             val list = mutableListOf<Todo>()
             gson.fromJson<List<GsonTodo>>(s, sType)?.forEach {
                 list.add(it.toTodo())
