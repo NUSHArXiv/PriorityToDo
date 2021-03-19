@@ -1,7 +1,6 @@
 package com.thepyprogrammer.prioritytodo.model
 
-import java.io.InputStream
-import java.util.ArrayList
+import java.util.*
 
 class GsonTodos internal constructor(todos: MutableList<Todo>) : ArrayList<GsonTodo>() {
     init {
