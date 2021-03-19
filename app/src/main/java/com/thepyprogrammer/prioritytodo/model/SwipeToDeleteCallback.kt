@@ -4,11 +4,16 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 
 class SwipeToDeleteCallback(
-        val adapter: TodoAdapter,
-        dragDirs: Int = 0,
-        swipeDirs: Int = ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT): ItemTouchHelper.SimpleCallback(dragDirs, swipeDirs) {
+    val adapter: TodoAdapter,
+    dragDirs: Int = 0,
+    swipeDirs: Int = ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+) : ItemTouchHelper.SimpleCallback(dragDirs, swipeDirs) {
 
-    override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+    override fun onMove(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder,
+        target: RecyclerView.ViewHolder
+    ): Boolean {
         TODO("Not yet implemented")
     }
 
